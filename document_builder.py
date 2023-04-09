@@ -10,7 +10,9 @@ def create_word(text_pdf, graphics_pdf):
     assert isinstance(graphics_pdf, str)
 
     pages = analyzer.pdf_to_text(text_pdf)
+    # print(pages)
     source_dict = analyzer.clean_text(pages)
+    # print(source_dict)
 
     date = source_dict["date"]
     building = source_dict["building"]
