@@ -16,6 +16,7 @@ def create_word(text_pdf, graphics_pdf):
 
     date = source_dict["date"]
     building = source_dict["building"]
+    no_of_blows = source_dict["no_of_blows"]
 
     df_text = pd.DataFrame(data=source_dict["piles"],
                            columns=["Pile Name", "v peak [mm/s]", "a peak [m/s2]", "t50% [ms]", "Measured Length [m]"])
@@ -89,7 +90,7 @@ def create_word(text_pdf, graphics_pdf):
 
     # determine the no of pages in the expert advice section based on the no of piles
     # (and thus based on the size of the table in the generated docx file)
-    no_of_piles = len(df_text["Pile Name"]) + 1
+    no_of_piles = len(df_text["Pile Name"])
     if no_of_piles <= 25:
         expert_advice_length = 4
     else:
@@ -119,17 +120,18 @@ def create_word(text_pdf, graphics_pdf):
 
     template.save(path_to_docx)
 
-    if faulty_piles or missing_piles:
+    if faulty_piles or missing_piles or no_of_blows != no_of_piles:
         with open(f"output/{building}/{date}-i mérés/ERROR_FAULTY_OR_MISSING_PILES_FOUND.txt", "w", encoding="utf-8") as file:
             for pile in faulty_piles:
                 file.write(f"Faulty: {pile}\n")
             for pile in missing_piles:
                 file.write(f"Missing: {pile}\n")
+            file.write(f"Piles: {no_of_piles}/{no_of_blows}\n")
     else:
         with open(f"output/{building}/{date}-i mérés/OK.txt", "w", encoding="utf-8") as file:
             pass
 
-    return faulty_piles, missing_piles, path_to_docx
+    return faulty_piles, missing_piles, path_to_docx, no_of_piles, no_of_blows
 
 
 def merge_pdfs(input_paths, output_path):

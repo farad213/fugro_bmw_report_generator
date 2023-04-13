@@ -1,0 +1,5 @@
+Faulty: P2515- 3
+Faulty: P2516- 3
+Faulty: P2517- 2
+Faulty: P2518- 4
+Piles: 71/71

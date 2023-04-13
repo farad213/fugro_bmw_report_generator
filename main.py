@@ -38,17 +38,19 @@ def pair_files(input_folder):
 
     return file_pairs
 
+
 def run():
     file_pairs = pair_files("input")
-    master_check = {"faulty": {}, "missing": {}}
+    master_check = {"faulty": {}, "missing": {}, "blow_counter": {}}
     master_faulty_check_list = []
     master_missing_check_list = []
     for pair in tqdm(file_pairs, desc="Processing", bar_format="{l_bar}{bar} ETA: {remaining} Elapsed: {elapsed}"):
         text_path = f"input/{pair['text']}"
         graphics_path = f"input/{pair['graphics']}"
 
-        faulty_piles, missing_piles, path_to_docx = document_builder.create_word(text_pdf=text_path,
-                                                                                 graphics_pdf=graphics_path)
+        faulty_piles, missing_piles, path_to_docx, no_of_piles, no_of_blows = document_builder.create_word(
+            text_pdf=text_path,
+            graphics_pdf=graphics_path)
 
         path_to_pdf = path_to_docx.replace("docx", "pdf")
 
@@ -67,12 +69,13 @@ def run():
             master_missing_check_list.append(missing_piles)
         else:
             master_check["missing"] = master_check["missing"] | {base_dir: "OK"}
+        master_check["blow_counter"] = master_check["blow_counter"] | {base_dir: f"Piles: {no_of_piles}/{no_of_blows}"}
 
         os.makedirs(f"{base_dir}/pdf")
         shutil.move(text_path, f"{base_dir}/pdf/{pair['text']}")
         shutil.move(graphics_path, f"{base_dir}/pdf/{pair['graphics']}")
 
-    if master_faulty_check_list or master_missing_check_list:
+    if master_faulty_check_list or master_missing_check_list or no_of_piles != no_of_blows:
         with open("output/MASTER_CHECK_ERROR_FAULTY_OR_MISSING_PILES_FOUND.txt", "w", encoding="utf-8") as file:
             for key in master_check["faulty"].keys():
                 _, building, date = key.split("/")
@@ -80,13 +83,15 @@ def run():
                 value = master_check["missing"][key]
                 file.write(f"{building:6}{date + ':':15} Missing: {value}\t")
                 value = master_check["faulty"][key]
-                file.write(f"Faulty: {value}\n")
-
+                file.write(f"Faulty: {value}\t")
+                value = master_check["blow_counter"][key]
+                file.write(f"{value}\n")
     else:
         with open("output/MASTER_CHECK_OK.txt", 'w', encoding="utf-8") as f:
             pass
 
     return None
+
 
 if __name__ == "__main__":
     run()

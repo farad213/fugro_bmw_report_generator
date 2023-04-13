@@ -66,8 +66,9 @@ def clean_text(pages):
     building = misc_data[0].split("-")[1].strip()
     pages_no = misc_data[-3].removeprefix("1 of ").strip()
     date = misc_data[-5].removesuffix("-i mérés").strip()
+    no_of_blows = int(misc_data[4].split(":")[1].strip())
 
-    misc_data = {"building": building, "pages_no": pages_no, "date": date}
+    misc_data = {"building": building, "pages_no": pages_no, "date": date, "no_of_blows": no_of_blows}
 
     data = []
     for index, page in enumerate(pages):
