@@ -80,15 +80,24 @@ def run():
             for key in master_check["faulty"].keys():
                 _, building, date = key.split("/")
                 date = date.removesuffix("-i mérés")
+                value = master_check["blow_counter"][key]
+                file.write(f"{value}\t")
                 value = master_check["missing"][key]
                 file.write(f"{building:6}{date + ':':15} Missing: {value}\t")
                 value = master_check["faulty"][key]
-                file.write(f"Faulty: {value}\t")
-                value = master_check["blow_counter"][key]
-                file.write(f"{value}\n")
+                file.write(f"Faulty: {value}\n")
+
     else:
-        with open("output/MASTER_CHECK_OK.txt", 'w', encoding="utf-8") as f:
-            pass
+        with open("output/MASTER_CHECK_OK.txt", 'w', encoding="utf-8") as file:
+            for key in master_check["faulty"].keys():
+                _, building, date = key.split("/")
+                date = date.removesuffix("-i mérés")
+                value = master_check["blow_counter"][key]
+                file.write(f"{value}\t")
+                value = master_check["missing"][key]
+                file.write(f"{building:6}{date + ':':15} Missing: {value}\t")
+                value = master_check["faulty"][key]
+                file.write(f"Faulty: {value}\n")
 
     return None
 
