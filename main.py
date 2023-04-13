@@ -93,9 +93,9 @@ def run():
                 _, building, date = key.split("/")
                 date = date.removesuffix("-i mérés")
                 value = master_check["blow_counter"][key]
-                file.write(f"{value}\t")
+                file.write(f"{building:6}{date + ':':15}{value}\t")
                 value = master_check["missing"][key]
-                file.write(f"{building:6}{date + ':':15} Missing: {value}\t")
+                file.write(f"Missing: {value}\t")
                 value = master_check["faulty"][key]
                 file.write(f"Faulty: {value}\n")
 
